@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>For You <3</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap");
+
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        /* Nền trời đêm tối hơn để pháo hoa rực rỡ nhất */
+        background: radial-gradient(
+          ellipse at bottom,
+          #111a24 0%,
+          #000000 100%
+        );
+        overflow: hidden;
+        font-family: "Great Vibes", cursive;
+      }
+
+      #tsparticles {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        /* Tăng độ sáng cho hiệu ứng hạt */
+        filter: brightness(1.2) contrast(1.1);
+      }
+
+      #start-screen {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.85);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 50;
+        cursor: pointer;
+        color: #fff;
+        font-size: clamp(1.5rem, 4vw, 2.5rem);
+        text-shadow:
+          0 0 10px #fff,
+          0 0 20px #ff66b3,
+          0 0 40px #ff00de;
+        transition: opacity 1.5s ease;
+        animation: pulseText 2s infinite;
+      }
+
+      @keyframes pulseText {
+        0%,
+        100% {
+          transform: scale(1);
+          opacity: 0.8;
+        }
+        50% {
+          transform: scale(1.05);
+          opacity: 1;
+          text-shadow:
+            0 0 15px #fff,
+            0 0 30px #ff66b3;
+        }
+      }
+
+      .letter-wrapper {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 10;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 2.5s ease;
+      }
+
+      /* Khung thư trong suốt, không che pháo hoa */
+      .letter-content {
+        position: relative;
+        width: 90%;
+        max-width: 850px;
+        max-height: 80vh;
+        overflow-y: auto;
+        padding: 45px 35px;
+        background: rgba(0, 0, 0, 0.15); /* Rất trong suốt */
+        backdrop-filter: blur(2px); /* Mờ nhẹ để không mất chi tiết nền */
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 20px;
+        box-shadow:
+          0 0 30px rgba(0, 0, 0, 0.5),
+          inset 0 0 20px rgba(255, 102, 179, 0.1);
+        text-align: center;
+      }
+
+      /* Vùng chứa text độc lập để không đè lên 4 góc */
+      #textContent {
+        color: #fff;
+        /* Cỡ chữ cho ĐIỆN THOẠI: Thu nhỏ lại gọn gàng */
+        font-size: clamp(1.4rem, 4vw, 1.8rem);
+        line-height: 1.8;
+        letter-spacing: 1.5px;
+        text-shadow:
+          0 0 4px #fff,
+          0 0 10px #ff66b3,
+          0 0 25px #ff4d88;
+      }
+
+      /* Cấu hình riêng cho MÁY TÍNH (Màn hình lớn hơn 768px) */
+      @media (min-width: 768px) {
+        #textContent {
+          font-size: 1.5rem; /* Cỡ chữ PC nhỏ nhắn, tinh tế */
+          line-height: 2.2; /* Dãn dòng thưa hơn cho sang trọng */
+          letter-spacing: 2px;
+        }
+        .letter-content {
+          width: 70%; /* Box gọn gàng hơn trên PC */
+          padding: 60px 50px;
+        }
+      }
+
+      /* Animation 4 góc */
+      .corner-anim {
+        position: absolute;
+        font-size: 1.5rem;
+        animation: heartbeat 1.5s infinite;
+        filter: drop-shadow(0 0 8px #ff4d88);
+        user-select: none;
+      }
+      .top-left {
+        top: 15px;
+        left: 15px;
+      }
+      .top-right {
+        top: 15px;
+        right: 15px;
+      }
+      .bottom-left {
+        bottom: 15px;
+        left: 15px;
+      }
+      .bottom-right {
+        bottom: 15px;
+        right: 15px;
+      }
+
+      @keyframes heartbeat {
+        0% {
+          transform: scale(1);
+          opacity: 0.7;
+        }
+        15% {
+          transform: scale(1.2);
+          opacity: 1;
+        }
+        30% {
+          transform: scale(1);
+          opacity: 0.7;
+        }
+        45% {
+          transform: scale(1.15);
+          opacity: 0.9;
+        }
+        60% {
+          transform: scale(1);
+          opacity: 0.7;
+        }
+      }
+
+      .letter-content::-webkit-scrollbar {
+        width: 2px;
+      }
+      .letter-content::-webkit-scrollbar-thumb {
+        background: rgba(255, 102, 179, 0.4);
+        border-radius: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles-preset-fireworks@2/tsparticles.preset.fireworks.bundle.min.js"></script>
+
+    <audio id="bgMusic" loop>
+      <source src="music.mp3" type="audio/mpeg" />
+    </audio>
+    <audio id="fireworkSound" loop>
+      <source src="fireworks.mp3" type="audio/mpeg" />
+    </audio>
+    <audio id="typingSound" loop>
+      <source src="typing.mp3" type="audio/mpeg" />
+    </audio>
+
+    <div id="tsparticles"></div>
+
+    <div id="start-screen" onclick="startExperience()">Chạm vào đây...</div>
+
+    <div class="letter-wrapper" id="letterWrapper">
+      <div class="letter-content">
+        <div class="corner-anim top-left">💖</div>
+        <div class="corner-anim top-right">✨</div>
+        <div class="corner-anim bottom-left">✨</div>
+        <div class="corner-anim bottom-right">💖</div>
+
+        <div id="textContent"></div>
+      </div>
+    </div>
+
+    <script>
+      const message = `Gửi yêu dấu,\n\nAnh có gửi cho em một bó hoa và một lá thư tay. Anh không biết em có chờ được vài ngày nữa cho tới khi nhận được nó hay không nhưng anh thực sự mong em có thể kiên nhẫn đọc hết, vì đó là tất cả những gì thật nhất trong lòng anh lúc này.\n\nAnh nhận ra mọi rắc rối vừa qua đều bắt nguồn từ sự 'overthinking' của chính mình. Trong mắt anh, em luôn là một cô gái tuyệt vời – dù em có trang điểm hay để mặt mộc, em vẫn luôn xinh đẹp theo cách của riêng em. Anh yêu sự thông minh, hiểu chuyện và cả cách em chăm chỉ mỗi ngày.
+       Đôi khi chỉ ngồi nhìn em thôi, anh cũng tự mỉm cười vì thấy sao em lại đáng yêu đến thế. Hay có hôm nào ngồi sau xe anh mà bảo : 'Anh ơi em đang ăn gió này’ :))).. Chỉ một tiếng gọi anh ơi thôi anh cũng thấy lòng mình như dịu lại.\n\n
+       Em hoàn hảo trong mắt anh quá, nên anh luôn sợ mất em. Nhưng cũng chính vì thế mà anh tự tạo ra áp lực cho mình. Mỗi khi nghĩ nhiều, anh lại chọn cách im lặng vì không muốn đem những suy nghĩ vẩn vơ, linh tinh cho em biết, nhưng vô tình lại khiến em cảm thấy không được chia sẻ. Anh biết mình đã sai khi chỉ biết giải quyết mọi thứ qua tin nhắn mà thiếu đi những những lời yêu thương trực tiếp.\nAnh trân trọng nhưng lại không yêu đúng cách, không kịp hiểu thấu cảm xúc của em..\n\nNhưng em à, sau những lần rạn nứt này, cảm xúc và suy nghĩ của anh nó cũng trưởng thành hơn phần nào. Anh hiểu rằng tình yêu không phải là sự chiếm hữu hay giữ khư khư như một đứa trẻ. Càng giữ chặt, mình càng dễ mất; càng suy nghĩ tiêu cực, anh tự làm khổ anh và tội cả cho em nữa. Không có gì thực sự chia cách chúng ta cả, chỉ có sự thiếu chín chắn của anh đã vô tình đẩy em ra xa.\n\nAnh sợ lặng im quá lâu, mình sẽ không còn cơ hội gửi em bó hoa lần sau khi bó hoa này tàn nữa. Những ngày vừa qua cũng đủ dài để chúng mình suy nghĩ, anh mong chúng mình có thể cho nhau một cơ hội để yêu lại theo một cách khác: chậm rãi hơn và sâu đậm hơn. Anh không muốn sau này phải sống trong hối tiếc. Từ ngày đầu gặp gỡ đến giờ, chặng đường mình đi cũng có nhiều lần phải chậm lại nhưng anh vẫn tha thiết muốn được cùng em đi tiếp những ngày tháng phía trước. Nếu hai ta cứ như thế này, anh không nỡ nhìn đoạn tình cảm này kết thúc.\n\n Em còn yêu anh không ? Còn muốn tiếp tục với anh không ? Dù là rất mong manh, thì xin em hãy cho anh một cơ hội nữa nhé..`;
+
+      let i = 0;
+      const speed = 85; // Tốc độ gõ chậm lại để chiêm nghiệm
+      const textContent = document.getElementById("textContent");
+      const typingSound = document.getElementById("typingSound");
+
+      function startExperience() {
+        const startScreen = document.getElementById("start-screen");
+        startScreen.style.opacity = "0";
+        setTimeout(() => (startScreen.style.visibility = "hidden"), 1500);
+
+        tsParticles.load("tsparticles", {
+          preset: "fireworks",
+          background: { color: "transparent" },
+        });
+
+        // Xử lý hệ thống âm thanh
+        const bgMusic = document.getElementById("bgMusic");
+        const fwSound = document.getElementById("fireworkSound");
+
+        bgMusic.volume = 0.7; // Nhạc chính
+        bgMusic.play();
+
+        fwSound.volume = 0.2; // Pháo hoa nổ nhẹ nhàng làm nền
+        fwSound.play();
+
+        const letterWrapper = document.getElementById("letterWrapper");
+        letterWrapper.style.visibility = "visible";
+        letterWrapper.style.opacity = "1";
+
+        // Bắt đầu gõ và phát tiếng bàn phím
+        setTimeout(() => {
+          typingSound.volume = 0.5;
+          typingSound.play();
+          typeWriter();
+        }, 2000);
+      }
+
+      function typeWriter() {
+        if (i < message.length) {
+          if (message.charAt(i) === "\n") {
+            textContent.innerHTML += "<br>";
+          } else {
+            textContent.innerHTML += message.charAt(i);
+          }
+          i++;
+
+          // Cuộn mượt mà
+          const container = document.querySelector(".letter-content");
+          container.scrollTo({
+            top: container.scrollHeight,
+            behavior: "smooth",
+          });
+
+          setTimeout(typeWriter, speed);
+        } else {
+          // Dừng tiếng gõ phím khi đã viết xong
+          typingSound.pause();
+        }
+      }
+    </script>
+  </body>
+</html>
